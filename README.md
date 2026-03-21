@@ -316,6 +316,31 @@ import { getBlinkOpacity, BLINK_CYCLE, BLINK_DELAYS } from "flowring";
 const opacity = getBlinkOpacity(elapsedSeconds, rankIndex);
 ```
 
+## Running the Demo Locally
+
+The `examples/demo-map/` directory contains a full working demo using MapLibre, deck.gl, and flowring to visualize South Korea population migration data.
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/vuski/flowring.git
+cd flowring
+
+# 2. Install library dependencies and build
+npm install
+npm run build
+
+# 3. Install demo app dependencies
+cd examples/demo-map
+npm install
+
+# 4. Start the dev server
+npm run dev
+```
+
+Open http://localhost:3000 and hover over the map to see the visualization.
+
+Or visit the **[Live Demo](https://vuski.github.io/flowring)** directly.
+
 ## License
 
 MIT

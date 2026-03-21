@@ -1,0 +1,53 @@
+{
+  "name": "flowring",
+  "version": "0.1.0",
+  "description": "SVG flow visualization with directional arcs, arrows, and ranked labels",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./react": {
+      "types": "./dist/react/index.d.ts",
+      "import": "./dist/react/index.js",
+      "require": "./dist/react/index.cjs"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "cd examples/demo-map && npm run dev",
+    "build:demo": "cd examples/demo-map && npm run build"
+  },
+  "dependencies": {
+    "d3-path": "^3.1.0",
+    "d3-selection": "^3.0.0",
+    "d3-shape": "^3.2.0"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/d3-path": "^3.1.0",
+    "@types/d3-selection": "^3.0.0",
+    "@types/d3-shape": "^3.1.0",
+    "@types/react": "^19",
+    "react": "^19",
+    "tsup": "^8.4.0",
+    "typescript": "^5"
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "license": "MIT"
+}

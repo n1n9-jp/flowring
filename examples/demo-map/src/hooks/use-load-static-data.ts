@@ -1,0 +1,44 @@
+"use client";
+
+import { useEffect } from "react";
+import { useFlowStore } from "@/stores/flow-store";
+import { mergeRows } from "@/lib/flow-utils";
+
+const UNIT_FILE: Record<string, string> = {
+  "시군구": "/netflow-all-sgg.json",
+  "읍면동": "/netflow-all-emd.json",
+};
+
+export function useLoadStaticData() {
+  const counterpartyUnit = useFlowStore((s) => s.counterpartyUnit);
+  const setNetflowAllRawData = useFlowStore((s) => s.setNetflowAllRawData);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function load() {
+      const file = UNIT_FILE[counterpartyUnit];
+      if (!file) return;
+
+      try {
+        const res = await fetch(file);
+        const rawData = await res.json();
+        if (cancelled) return;
+
+        const merged = mergeRows(rawData);
+        const withId = merged.map((row: { ori: number; des: number; flow: number }, i: number) => ({
+          id: String(i + 1),
+          ...row,
+        }));
+
+        setNetflowAllRawData(withId);
+        console.log(`[static-data] loaded ${file}: ${withId.length} rows`);
+      } catch (err) {
+        console.error("[static-data] failed to load:", err);
+      }
+    }
+
+    load();
+    return () => { cancelled = true; };
+  }, [counterpartyUnit, setNetflowAllRawData]);
+}

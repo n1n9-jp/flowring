@@ -11,7 +11,7 @@ export function useEmdGeojson() {
 
     async function load() {
       try {
-        const res = await fetch("/emd.geojson");
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/emd.geojson`);
         const data: FeatureCollection = await res.json();
         if (!cancelled) {
           console.log(`[emd-geojson] loaded ${data.features.length} features`);

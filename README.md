@@ -83,6 +83,17 @@ const ring = flowring(document.getElementById("container"), {
   },
 });
 
+// source: the center region
+const source = { id: "seoul", label: "Seoul", coord: [126.978, 37.566] };
+
+// data: ranked counterparts (array order = rank order)
+const data = [
+  { id: "suwon", label: "Suwon", coord: [127.0, 37.27], value: 1200 },
+  { id: "incheon", label: "Incheon", coord: [126.7, 37.45], value: 980 },
+  { id: "goyang", label: "Goyang", coord: [126.83, 37.65], value: 750 },
+  // ...up to topN items
+];
+
 ring.update(source, data);
 map.on("move", () => ring.render());
 ```
@@ -120,6 +131,8 @@ Provide a `projection` callback to convert `[lon, lat]` to screen pixels.
 ```js
 import { flowring } from "flowring";
 
+// map: your MapLibre GL instance
+// overlayDiv: a div positioned over the map
 const ring = flowring(overlayDiv, {
   projection: (coord) => {
     const p = map.project(coord);
@@ -134,7 +147,13 @@ const ring = flowring(overlayDiv, {
 map.on("move", () => ring.render());
 
 // Update on hover
-ring.update(source, rankedData);
+ring.update(
+  { id: "seoul", label: "Seoul", coord: [126.978, 37.566] },
+  [
+    { id: "suwon", label: "Suwon", coord: [127.0, 37.27], value: 1200 },
+    { id: "incheon", label: "Incheon", coord: [126.7, 37.45], value: 980 },
+  ]
+);
 
 // Cleanup
 ring.destroy();
@@ -146,11 +165,14 @@ Use `FlowringIndicator` component and `useFlowring` hook.
 
 ```tsx
 import { FlowringIndicator, useFlowring } from "flowring/react";
-import { getBlinkOpacity } from "flowring";
 
 function MyMap() {
   const mapRef = useRef(null);
   const { blinkTime, resetBlink } = useFlowring();
+
+  // selectedRegion: { code, name } from your app state (e.g., on hover)
+  // allData: full ranked array from your data source
+  // filteredData: top N items to display
 
   useEffect(() => {
     resetBlink();
@@ -162,14 +184,14 @@ function MyMap() {
         <FlowringIndicator
           mapRef={mapRef}
           source={{
-            id: region.code,
-            label: region.name,
-            coord: [center.lon, center.lat],
+            id: selectedRegion.code,
+            label: selectedRegion.name,
+            coord: [selectedRegion.lon, selectedRegion.lat],
           }}
           data={filteredData.map((r) => ({
             id: r.id,
             label: r.name,
-            coord: [r.lon, r.lat],
+            coord: [r.lon, r.lat] as [number, number],
             value: r.count,
           }))}
           blinkTime={blinkTime}
@@ -192,7 +214,9 @@ Flowring draws the SVG overlay, but coloring regions on the map is up to you.
 Here's how to highlight the top ranked regions using deck.gl's GeoJsonLayer:
 
 ```js
-// Basic: highlight top 10 regions with a static color
+// geojson: your region boundaries FeatureCollection
+// selectedRegionCode: code of the hovered source region
+// rankMap: Map<code, rankIndex> built from flowring data
 new GeoJsonLayer({
   id: "region-highlight",
   data: geojson,
@@ -220,6 +244,7 @@ Use `getBlinkOpacity` to synchronize map fill colors with the same timing:
 ```js
 import { getBlinkOpacity } from "flowring";
 
+// blinkTime: from useFlowring() hook or createBlinkTimer()
 new GeoJsonLayer({
   id: "region-highlight",
   data: geojson,

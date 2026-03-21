@@ -4,9 +4,10 @@ import { useEffect } from "react";
 import { useFlowStore } from "@/stores/flow-store";
 import { mergeRows } from "@/lib/flow-utils";
 
+const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const UNIT_FILE: Record<string, string> = {
-  "시군구": "/netflow-all-sgg.json",
-  "읍면동": "/netflow-all-emd.json",
+  "시군구": `${BASE}/netflow-all-sgg.json`,
+  "읍면동": `${BASE}/netflow-all-emd.json`,
 };
 
 export function useLoadStaticData() {

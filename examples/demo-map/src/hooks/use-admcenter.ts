@@ -11,7 +11,7 @@ export function useAdmcenter() {
   useEffect(() => {
     if (admcenter.length > 0) return;
 
-    fetch("/center.tsv")
+    fetch(`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/center.tsv`)
       .then((res) => res.text())
       .then((text) => {
         const lines = text.trim().replace(/\r/g, "").split("\n");

@@ -418,6 +418,14 @@ export default function MapContainer() {
           ))}
         </div>
       </div>
+      <a
+        href="https://github.com/vuski/flowring"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="absolute top-14 left-4 z-10 rounded shadow bg-background/90 text-xs px-3 py-1.5 hover:bg-muted transition-colors"
+      >
+        github.com/vuski/flowring
+      </a>
 
       {/* 스타일 스위처 */}
       <div className="absolute bottom-6 left-2 z-10">

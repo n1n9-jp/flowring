@@ -1,4 +1,4 @@
-// 행정구역 중심좌표 (center.tsv)
+// 行政区域の中心座標 (center.tsv)
 export type AdmCenter = {
   admcd: number;
   admnm: string;
@@ -6,7 +6,7 @@ export type AdmCenter = {
   lat: number;
 };
 
-// 순이동 데이터 (JSON 응답 행)
+// 純移動データ (JSONレスポンス行)
 export type NetflowDataRow = {
   id: string;
   ori: number;
@@ -14,10 +14,10 @@ export type NetflowDataRow = {
   flow: number;
 };
 
-// 전체 모드 필터링 결과 행 (지역 hover 후 표시용)
+// 全体モードのフィルタリング結果行 (地域hover時の表示用)
 export type FlowAllFilteredRow = {
   id: string;
-  region: number; // 카운터파트 지역 코드
+  region: number; // カウンターパート地域コード
   regionName: string;
   count: number;
 };

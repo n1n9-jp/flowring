@@ -170,16 +170,16 @@ export default function MapContainer() {
   const [styleMenuOpen, setStyleMenuOpen] = useState(false);
   const mapRef = useRef<MapRef>(null);
 
-  // 행정구역 중심좌표 로딩
+  // 行政区域の中心座標読み込み
   useAdmcenter();
 
-  // 정적 데이터 로딩 (counterpartyUnit 변경 시 자동 전환)
+  // 静的データ読み込み (counterpartyUnit変更時に自動切替)
   useLoadStaticData();
 
-  // 읍면동 GeoJSON (hover 감지용)
+  // 邑面洞GeoJSON (hover検知用)
   const emdGeojson = useEmdGeojson();
 
-  // Store 구독
+  // Store購読
   const netflowAllRawData = useFlowStore((s) => s.netflowAllRawData);
   const setSelectedRegion = useFlowStore((s) => s.setSelectedRegion);
   const admcenterMap = useFlowStore((s) => s.admcenterMap);
@@ -204,12 +204,12 @@ export default function MapContainer() {
     };
   }, []);
 
-  // 깜빡임 타이머 리셋 (selectedRegion 변경 시)
+  // 点滅タイマーリセット (selectedRegion変更時)
   useEffect(() => {
     resetBlink();
   }, [selectedRegion, resetBlink]);
 
-  // 스타일 변경 시 idle 이벤트로 오버레이 재적용
+  // スタイル変更時にidleイベントでオーバーレイを再適用
   useEffect(() => {
     const map = mapRef.current?.getMap();
     if (!map) return;
@@ -240,7 +240,7 @@ export default function MapContainer() {
     [styleId, setMapInstance],
   );
 
-  // deck.gl GeoJsonLayer onHover 핸들러
+  // deck.gl GeoJsonLayer onHoverハンドラ
   const handleEmdHover = useCallback(
     (info: PickingInfo) => {
       if (!info.object) {
@@ -253,7 +253,7 @@ export default function MapContainer() {
       let code: number;
       let name: string;
 
-      if (counterpartyUnit === "시군구") {
+      if (counterpartyUnit === "市郡区") {
         code = Number(props?.sggcd);
         name = props?.sggnm || String(code);
       } else {
@@ -268,7 +268,7 @@ export default function MapContainer() {
     [counterpartyUnit, setSelectedRegion, lastHoverCode],
   );
 
-  // code → 순위(0-based) 매핑
+  // code → 順位(0-based)マッピング
   const top10RankMap = useMemo(() => {
     if (!netflowAllFilteredData) return new globalThis.Map<number, number>();
     const m = new globalThis.Map<number, number>();
@@ -278,7 +278,7 @@ export default function MapContainer() {
 
   const hoverCode = selectedRegion?.code ?? null;
 
-  const codeKey = counterpartyUnit === "시군구" ? "sggcd" : "emdcd";
+  const codeKey = counterpartyUnit === "市郡区" ? "sggcd" : "emdcd";
 
   const emdLayer =
     emdGeojson && hasRawData
@@ -370,8 +370,8 @@ export default function MapContainer() {
               };
             }).filter((d) => d.coord[0] !== 0)}
             blinkTime={blinkTime}
-            direction={direction === "순유입" ? "inbound" : "outbound"}
-            subtitle={`${direction} 인구 순위`}
+            direction={direction === "純流入" ? "inbound" : "outbound"}
+            subtitle={`${direction} 人口順位`}
             colors={{
               stroke: DARK_STYLES.has(styleId) ? "white" : "black",
               buffer: DARK_STYLES.has(styleId) ? "black" : "white",
@@ -380,15 +380,15 @@ export default function MapContainer() {
             total={netflowAllFilteredData.reduce((acc, r) => acc + r.count, 0)}
             animate={true}
             blinkCount={3}
-            formatLabel={(d, rank) => `${d.label} ${d.value.toLocaleString()}명`}
+            formatLabel={(d, rank) => `${d.label} ${d.value.toLocaleString()}人`}
           />
         );
       })()}
 
-      {/* 데이터 스위처 (시군구/읍면동 + 순유입/순유출) */}
+      {/* データスイッチャー (市郡区/邑面洞 + 純流入/純流出) */}
       <div className="absolute top-4 left-4 z-10 flex gap-2">
         <div className="flex rounded shadow bg-background/90 text-xs overflow-hidden">
-          {(["시군구", "읍면동"] as const).map((unit) => (
+          {(["市郡区", "邑面洞"] as const).map((unit) => (
             <button
               key={unit}
               onClick={() => setCounterpartyUnit(unit)}
@@ -403,7 +403,7 @@ export default function MapContainer() {
           ))}
         </div>
         <div className="flex rounded shadow bg-background/90 text-xs overflow-hidden">
-          {(["순유입", "순유출"] as const).map((dir) => (
+          {(["純流入", "純流出"] as const).map((dir) => (
             <button
               key={dir}
               onClick={() => setDirection(dir)}
@@ -427,7 +427,7 @@ export default function MapContainer() {
         github.com/vuski/flowring
       </a>
 
-      {/* 스타일 스위처 */}
+      {/* スタイルスイッチャー */}
       <div className="absolute bottom-6 left-2 z-10">
         <div className="relative">
           <button

@@ -6,7 +6,7 @@ function getAdmNm(admcenterMap: Map<number, AdmCenter>, code: number): string {
   return admcenterMap.get(padded)?.admnm ?? String(code);
 }
 
-// 사전 인덱스: code → [{counterpart, flow}] (양방향)
+// 事前インデックス: code → [{counterpart, flow}] (双方向)
 type RegionIndex = Map<number, { counterpart: number; flow: number }[]>;
 
 function buildIndex(rawData: NetflowDataRow[]): {
@@ -17,7 +17,7 @@ function buildIndex(rawData: NetflowDataRow[]): {
   const outbound: RegionIndex = new Map();
 
   for (const r of rawData) {
-    // netflow-all: ori < des 정규화, 양방향 인덱스
+    // netflow-all: ori < des 正規化、双方向インデックス
     if (!inbound.has(r.des)) inbound.set(r.des, []);
     inbound.get(r.des)!.push({ counterpart: r.ori, flow: r.flow });
     if (!inbound.has(r.ori)) inbound.set(r.ori, []);
@@ -33,28 +33,28 @@ function buildIndex(rawData: NetflowDataRow[]): {
 }
 
 interface FlowState {
-  // 행정구역 중심좌표
+  // 行政区域の中心座標
   admcenter: AdmCenter[];
   admcenterMap: Map<number, AdmCenter>;
 
-  // 데이터 설정
-  counterpartyUnit: "시군구" | "읍면동";
-  direction: "순유입" | "순유출";
+  // データ設定
+  counterpartyUnit: "市郡区" | "邑面洞";
+  direction: "純流入" | "純流出";
 
-  // 전체 모드 데이터
+  // 全体モードデータ
   netflowAllRawData: NetflowDataRow[] | null;
   netflowAllIndex: { inbound: RegionIndex; outbound: RegionIndex } | null;
 
-  // 지도 hover 선택 지역
+  // 地図hover選択地域
   selectedRegion: { code: number; name: string } | null;
 
-  // 필터링 결과
+  // フィルタリング結果
   netflowAllFilteredData: FlowAllFilteredRow[] | null;
 
   // Actions
   setAdmcenter: (centers: AdmCenter[]) => void;
-  setCounterpartyUnit: (unit: "시군구" | "읍면동") => void;
-  setDirection: (dir: "순유입" | "순유출") => void;
+  setCounterpartyUnit: (unit: "市郡区" | "邑面洞") => void;
+  setDirection: (dir: "純流入" | "純流出") => void;
   setNetflowAllRawData: (data: NetflowDataRow[] | null) => void;
   setSelectedRegion: (code: number, name: string) => void;
   clearSelectedRegion: () => void;
@@ -64,8 +64,8 @@ export const useFlowStore = create<FlowState>((set, get) => ({
   admcenter: [],
   admcenterMap: new Map(),
 
-  counterpartyUnit: "시군구",
-  direction: "순유입",
+  counterpartyUnit: "市郡区",
+  direction: "純流入",
 
   netflowAllRawData: null,
   netflowAllIndex: null,
@@ -88,7 +88,7 @@ export const useFlowStore = create<FlowState>((set, get) => ({
 
   setDirection: (dir) => {
     set({ direction: dir });
-    // 방향 변경 시 현재 선택 지역 다시 필터링
+    // 方向変更時に現在の選択地域を再フィルタリング
     const state = get();
     if (state.selectedRegion) {
       get().setSelectedRegion(state.selectedRegion.code, state.selectedRegion.name);
@@ -112,7 +112,7 @@ export const useFlowStore = create<FlowState>((set, get) => ({
       return;
     }
 
-    const isInbound = direction === "순유입";
+    const isInbound = direction === "純流入";
 
     // O(1) lookup
     const entries = (isInbound ? index.inbound : index.outbound).get(code);
@@ -122,12 +122,12 @@ export const useFlowStore = create<FlowState>((set, get) => ({
       return;
     }
 
-    // 방향 필터 (순유입: flow>0, 순유출: flow<0)
+    // 方向フィルタ (純流入: flow>0, 純流出: flow<0)
     const filtered = entries.filter((e) =>
       isInbound ? e.flow > 0 : e.flow < 0,
     );
 
-    // 같은 counterpart 합산 + 지역명 + 정렬
+    // 同一counterpartを合算 + 地域名 + ソート
     const merged = new Map<number, { region: number; regionName: string; count: number }>();
     for (const e of filtered) {
       const prev = merged.get(e.counterpart);

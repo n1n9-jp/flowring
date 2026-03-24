@@ -57,7 +57,7 @@
   }
 }
 
-/* MapLibre 컨트롤을 SVG overlay(z-index:300) 위에 표시 */
+/* MapLibreコントロールをSVG overlay(z-index:300)の上に表示 */
 .maplibregl-control-container {
   z-index: 400;
   position: relative;

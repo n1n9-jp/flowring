@@ -1,5 +1,5 @@
-// 시도 코드 통합: 구 시도 → 특별자치도로 치환
-// 강원도(42)→강원특별자치도(51), 전라북도(45)→전북특별자치도(52), 제주도(49)→제주특별자치도(50)
+// 都道コード統合: 旧都道 → 特別自治道に置換
+// 江原道(42)→江原特別自治道(51), 全羅北道(45)→全北特別自治道(52), 済州道(49)→済州特別自治道(50)
 const SIDO_MERGE: Record<number, number> = { 42: 51, 45: 52, 49: 50 };
 
 function getSido(code: number): number {
@@ -9,7 +9,7 @@ function getSido(code: number): number {
   return Math.floor(code / 100000000);
 }
 
-/** 코드의 앞 2자리(시도)를 특별자치도로 치환한 코드 반환 */
+/** コードの先頭2桁(都道)を特別自治道に置換したコードを返す */
 export function mergeSido(code: number): number {
   const sido = getSido(code);
   const merged = SIDO_MERGE[sido];
@@ -20,7 +20,7 @@ export function mergeSido(code: number): number {
   return merged * 100000000 + (code % 100000000);
 }
 
-/** 데이터 배열의 ori/des를 시도 통합하고, 같아진 행은 flow를 합산 */
+/** データ配列のori/desを都道統合し、同一になった行はflowを合算 */
 export function mergeRows<T extends { ori: number; des: number; flow: number }>(
   rows: T[],
 ): T[] {
